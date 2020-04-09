@@ -11,9 +11,11 @@ angular.module('Player.player', ['ngRoute'])
     $scope.musicSelected = false;
     $scope.trackName = null;
     $scope.songList = null;
+    $scope.songCategoryPlaylists = null;
+    $scope.playersByCategory = null;
     $scope.songPlaying = false;
     $scope.playListVisible = false;
-    $scope.shuffle = false;
+    $scope.shuffle = true;
     $scope.mute = false;
     $scope.theme = "dark";
     // $scope.playMusic();
@@ -63,11 +65,11 @@ angular.module('Player.player', ['ngRoute'])
             document.body.style.color = "#212529"
             var icons = document.body.querySelectorAll("svg");
             console.log(icons);
-            
+
             icons.forEach(icon => {
-              icon.style.color = "#212529"; 
+              icon.style.color = "#212529";
             });
-            
+
           }
           else if (data.theme == "disco") {
             $scope.theme = 'disco'
@@ -122,7 +124,7 @@ angular.module('Player.player', ['ngRoute'])
     }
     ipc.on('theme-change', function (event, arg) {
       // $location.path('/player/light')
-      
+
       themeChange()
     });
 
@@ -140,13 +142,15 @@ angular.module('Player.player', ['ngRoute'])
         $scope.player.pause();
       }
       $scope.songList = arg;
-      // console.log($scope.songList)
-      var songArr = [];
-      // console.log($scope.songList.files.length)
-      // var pth = arg.path;
+      var songCategoryPlaylists = {
+        noLetters: [],
+        somewhere: []
+      };
 
       for (let i = 0; i < $scope.songList.files.length; i++) {
-        var len = $scope.songList.files[i].split("/").length - 1
+        let len = $scope.songList.files[i].split("/").length - 1
+        let file = $scope.songList.files[i]
+        let songArr = file.indexOf("No") == 0 ? songCategoryPlaylists.noLetters : songCategoryPlaylists.somewhere
         songArr.push({
           // title: arg.path + '/' + $scope.songList.files[i],
           // file: arg.path + '/' + $scope.songList.files[i],
@@ -158,9 +162,21 @@ angular.module('Player.player', ['ngRoute'])
         });
       }
 
-      $scope.player = new Player(songArr);
+      $scope.playersByCategory = {}
+      Object.entries(songCategoryPlaylists).forEach(entry => {
+        let categoryName = entry[0];
+        let songsInCategory = entry[1];
+        $scope.playersByCategory[categoryName] = new Player(songsInCategory)
+        if (!$scope.player) {
+          // Default to first player
+          $scope.player = $scope.playersByCategory[categoryName]
+        }
+      });
+      $scope.songCategoryPlaylists = Object.keys(songCategoryPlaylists)
+
       $scope.musicSelected = true;
       $scope.$apply()
+
 
       $scope.playMusic()
       $scope.playMusic()
@@ -268,15 +284,15 @@ angular.module('Player.player', ['ngRoute'])
       }
     }
 
-    $scope.togglecheckbox = function() {
-        if ($scope.mute) {
-            $scope.mute = false;
-            $scope.player.volume(slider.value / 100);
-        }
-        else {
-            $scope.mute = true;
-            $scope.player.volume(0);
-        }
+    $scope.togglecheckbox = function () {
+      if ($scope.mute) {
+        $scope.mute = false;
+        $scope.player.volume(slider.value / 100);
+      }
+      else {
+        $scope.mute = true;
+        $scope.player.volume(0);
+      }
     }
 
     slider.oninput = function () {

@@ -6,7 +6,7 @@ body{
     background-color: #212121;
     padding: 3%;
     display:flex;
-    align-items:center;
+    align-items: baseline;
     color: azure;
     background-repeat: no-repeat;
     background-position-x: center;
@@ -17,6 +17,7 @@ body{
 .progress{
     margin: 2%;
     height: 10px;
+    cursor: pointer;
 }
 
 #timer{
