@@ -5,13 +5,7 @@ html, body {
 body{
     background-color: #212121;
     padding: 3%;
-    display:flex;
-    align-items: baseline;
     color: azure;
-    background-repeat: no-repeat;
-    background-position-x: center;
-    background-position-y: center;
-    overflow: hidden;
 }
 
 .progress{
@@ -36,8 +30,21 @@ body{
   text-overflow: ellipsis
 }
 
+.categoryTable {
+  display: flex;
+}
+
+.category {
+  padding: 10px;
+  font-weight: bold;
+  color: white;
+  background-color: #212121;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
 #playlist{
-    float: left;
+    float: right;
     z-index: 5;
     overflow-y: auto;
     overflow-x: hidden;
@@ -54,7 +61,7 @@ body{
 #search { 
     /* position:fixed;
     margin-top:-1px; */
-    float: left;
+    float: right;
     z-index: 5;
     max-width: 40%;
 
@@ -82,10 +89,9 @@ body{
     float: right;
     margin-right:5%
 }
-  .slidecontainer {
-      /* display: inline-block; */
-      float: left;
-      width: 40%;
+.slidecontainer {
+    display: inline-block;
+    width: 40%;
 }
 
 ::-webkit-scrollbar {

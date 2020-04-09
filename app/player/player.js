@@ -11,7 +11,7 @@ angular.module('Player.player', ['ngRoute'])
     $scope.musicSelected = false;
     $scope.trackName = null;
     $scope.songList = null;
-    $scope.songCategoryPlaylists = null;
+    $scope.songCategories = null;
     $scope.playersByCategory = null;
     $scope.songPlaying = false;
     $scope.playListVisible = false;
@@ -142,7 +142,7 @@ angular.module('Player.player', ['ngRoute'])
         $scope.player.pause();
       }
       $scope.songList = arg;
-      var songCategoryPlaylists = {
+      var songCategories = {
         noLetters: [],
         somewhere: []
       };
@@ -150,7 +150,7 @@ angular.module('Player.player', ['ngRoute'])
       for (let i = 0; i < $scope.songList.files.length; i++) {
         let len = $scope.songList.files[i].split("/").length - 1
         let file = $scope.songList.files[i]
-        let songArr = file.indexOf("No") == 0 ? songCategoryPlaylists.noLetters : songCategoryPlaylists.somewhere
+        let songArr = file.indexOf("No") > -1 ? songCategories.noLetters : songCategories.somewhere
         songArr.push({
           // title: arg.path + '/' + $scope.songList.files[i],
           // file: arg.path + '/' + $scope.songList.files[i],
@@ -163,23 +163,19 @@ angular.module('Player.player', ['ngRoute'])
       }
 
       $scope.playersByCategory = {}
-      Object.entries(songCategoryPlaylists).forEach(entry => {
+      Object.entries(songCategories).forEach(entry => {
         let categoryName = entry[0];
         let songsInCategory = entry[1];
-        $scope.playersByCategory[categoryName] = new Player(songsInCategory)
+        $scope.playersByCategory[categoryName] = new Player(songsInCategory, categoryName)
         if (!$scope.player) {
           // Default to first player
           $scope.player = $scope.playersByCategory[categoryName]
         }
       });
-      $scope.songCategoryPlaylists = Object.keys(songCategoryPlaylists)
+      $scope.songCategories = Object.keys(songCategories)
 
       $scope.musicSelected = true;
       $scope.$apply()
-
-
-      $scope.playMusic()
-      $scope.playMusic()
     }
 
     function tag(data) {
@@ -264,8 +260,18 @@ angular.module('Player.player', ['ngRoute'])
       }
     }
 
-    $scope.playMusic = function () {
-      if ($scope.songPlaying) {
+    $scope.clickCategory = function (category) {
+      if (category !== $scope.player.category) {
+        $scope.toggleMusicPlaying(false)
+        $scope.player = $scope.playersByCategory[category]
+        $scope.toggleMusicPlaying(true)
+      } else {
+        $scope.playMusic()
+      }
+    }
+
+    $scope.toggleMusicPlaying = function (shouldPlay) {
+      if (!shouldPlay) {
         $scope.songPlaying = false;
         $scope.player.pause();
       }
@@ -273,6 +279,10 @@ angular.module('Player.player', ['ngRoute'])
         $scope.songPlaying = true;
         $scope.player.play();
       }
+    }
+
+    $scope.playMusic = function () {
+      $scope.toggleMusicPlaying(!$scope.songPlaying)
     }
 
     $scope.toggleShuffle = function () {
@@ -301,7 +311,7 @@ angular.module('Player.player', ['ngRoute'])
       $scope.mute = false;
     }
 
-    var Player = function (playlist) {
+    var Player = function (playlist, category) {
       this.playlist = playlist;
       this.index = 0;
     }
@@ -314,8 +324,8 @@ angular.module('Player.player', ['ngRoute'])
 
         index = typeof index === 'number' ? index : self.index;
         var data = self.playlist[index];
-        // $scope.trackName = data.name;
-        // $scope.trackArtist = "";
+        $scope.trackName = data.name;
+        $scope.trackArtist = "";
         // console.log(data);
         tag(data);
 
