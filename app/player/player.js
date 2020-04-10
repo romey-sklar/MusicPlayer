@@ -293,21 +293,11 @@ angular.module('Player.player', ['ngRoute'])
       $scope.player.skipTo(index);
     }
     $scope.nextSong = function () {
-      if ($scope.shuffle) {
-        $scope.player.skip('random');
-      }
-      else {
-        $scope.player.skip('next');
-      }
+      $scope.player.skip('next');
       $scope.songPlaying = true;
     }
     $scope.prevSong = function () {
-      if ($scope.shuffle) {
-        $scope.player.skip('random');
-      }
-      else {
-        $scope.player.skip('prev');
-      }
+      $scope.player.skip('prev');
       $scope.songPlaying = true;
     }
 
@@ -353,6 +343,7 @@ angular.module('Player.player', ['ngRoute'])
       }
       else {
         $scope.shuffle = true;
+        $scope.player.randomIndexes = shuffleArray($scope.player.randomIndexes);
       }
     }
 
@@ -377,10 +368,31 @@ angular.module('Player.player', ['ngRoute'])
       return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
+    /* Randomize array in-place using Durstenfeld shuffle algorithm */
+    function shuffleArray(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+      return array;
+    }
+
+    function indexList(count) {
+      var list = []
+      for (var i = 0; i < count; i++) {
+        list.push(i);
+      }
+      return list;
+    }
+
     var Player = function (playlist, category) {
       this.category = category;
       this.playlist = playlist;
-      this.index = $scope.shuffle ? randomIntFromInterval(0, playlist.length - 1) : 0;
+      this.randomIndexes = shuffleArray(indexList(playlist.length));
+      this.shuffleIndex = 0;
+      this.index = $scope.shuffle ? this.randomIndexes[this.shuffleIndex] : 0;
     }
 
     Player.prototype = {
@@ -406,12 +418,7 @@ angular.module('Player.player', ['ngRoute'])
               $scope.$apply();
             },
             onend: function () {
-              if ($scope.shuffle) {
-                self.skip('random');
-              }
-              else {
-                self.skip('right');
-              }
+              self.skip('right');
             }
           });
         }
@@ -433,25 +440,28 @@ angular.module('Player.player', ['ngRoute'])
         var self = this;
 
         var index = 0;
-        if (direction === 'prev') {
-          index = self.index - 1;
-          if (index < 0) {
-            index = self.playlist.length - 1;
+        if ($scope.shuffle) {
+          self.shuffleIndex = direction === 'prev' ? self.shuffleIndex - 1 : self.shuffleIndex + 1;
+          if (self.shuffleIndex < 0) {
+            self.shuffleIndex = self.randomIndexes.length - 1;
+          } else if (self.shuffleIndex >= self.randomIndexes.length) {
+            self.shuffleIndex = 0;
+          }
+          index = self.randomIndexes[self.shuffleIndex];
+        } else {
+          if (direction === 'prev') {
+            index = self.index - 1;
+            if (index < 0) {
+              index = self.playlist.length - 1;
+            }
+          }
+          else {
+            index = self.index + 1;
+            if (index >= self.playlist.length) {
+              index = 0;
+            }
           }
         }
-        else if (direction === 'random') {
-          index = Math.floor(Math.random() * self.playlist.length) + 1;
-          console.log(index);
-
-        }
-        else {
-          index = self.index + 1;
-          if (index >= self.playlist.length) {
-            index = 0;
-          }
-        }
-
-        var data = self.playlist[self.index];
 
         self.skipTo(index);
       },
