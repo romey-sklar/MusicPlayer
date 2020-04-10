@@ -6,7 +6,6 @@ body{
     background-color: #212121;
     padding: 3%;
     display:flex;
-    align-items:center;
     color: azure;
     background-repeat: no-repeat;
     background-position-x: center;
@@ -14,9 +13,15 @@ body{
     overflow: hidden;
 }
 
+#track {
+  margin-left: 2px;
+  font-weight: bold;
+}
+
 .progress{
     margin: 2%;
     height: 10px;
+    cursor: pointer;
 }
 
 #timer{
@@ -35,39 +40,51 @@ body{
   text-overflow: ellipsis
 }
 
+.categoryTable {
+  display: flex;
+}
+
+.category {
+  padding: 10px;
+  font-weight: bold;
+  color: white;
+  background-color: #212121;
+  border: 1px solid white;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.category.selected {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+
+.sideContainer {
+  z-index: 5;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  height: 100vh;
+  width: 40%;
+  background-color: black;
+  box-shadow: 10px 0px 5px 0px rgba(0,0,0,0.25);
+}
+
 #playlist{
-    float: left;
-    z-index: 5;
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    max-width: 40%;
-
-    position: absolute;
-    top: 50px;
-    bottom: 10px;
-    left: 0px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 90%;
 }
 
-/* #parentDiv { position:relative; } */
 #search { 
-    /* position:fixed;
-    margin-top:-1px; */
-    float: left;
-    z-index: 5;
-    max-width: 40%;
-
-    position: absolute;
-    top: 5px;
-    bottom: 5px;
-    left: 0px;
+  margin-bottom: 10px;
 }
 
-.text-center{
-    margin-bottom: 5%
+.text-center {
+    margin-bottom: 10px;
 }
-
-
 
 #playlistBtn{
     float: right;
@@ -81,10 +98,9 @@ body{
     float: right;
     margin-right:5%
 }
-  .slidecontainer {
-      /* display: inline-block; */
-      float: left;
-      width: 40%;
+.slidecontainer {
+    display: inline-block;
+    width: 40%;
 }
 
 ::-webkit-scrollbar {
@@ -145,10 +161,4 @@ body{
 .btn-primary-outline {
   background-color: transparent;
   border-color: transparent
-}
-#picture{
-    /* z-index: -1; */
-    width: 40vw;
-    margin-right: 3%
-    
 }
