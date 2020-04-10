@@ -46,6 +46,7 @@ body{
 
 .categoryTable {
   display: flex;
+  width: 100vw;
 }
 
 .category {

@@ -55,7 +55,7 @@
   "author": "Aveek Saha",
   "license": "MIT",
   "devDependencies": {
-    "electron": "3.0.13",
+    "electron": "^8.2.1",
     "electron-builder": "^22.4.0"
   },
   "dependencies": {

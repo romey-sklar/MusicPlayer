@@ -3,8 +3,6 @@ angular.module('Player.player', ['ngRoute'])
   .config(['$routeProvider', ($routeProvider) => {
     $routeProvider.when('/player', {
       templateUrl: 'player/player.html', controller: 'Playerctrl'
-    }).when('/player/light', {
-      templateUrl: 'player/themes/light/index.html', controller: 'Playerctrl'
     })
   }])
   .controller('Playerctrl', ['$scope', '$location', function ($scope, $location) {
@@ -129,47 +127,61 @@ angular.module('Player.player', ['ngRoute'])
     });
 
     ipc.on('selected-files', function (event, arg) {
-      // console.log(arg)
 
       startPlayer(arg)
 
     });
 
     function startPlayer(arg) {
-
+      $scope.songList = arg;
       if ($scope.songPlaying) {
         $scope.songPlaying = false;
         $scope.player.pause();
       }
-      $scope.songList = arg;
-      var songCategories = {
-        Forrest: [],
-        Adventure: [],
-        Goblins: [],
-        Danger: [],
-        Royalty: [],
-        Skulls: [],
-        Bananas: [],
-        SavinoIsStupid: [],
-        CategoryName: []
-      };
-
+      let promises = []
       for (let i = 0; i < $scope.songList.files.length; i++) {
-        let len = $scope.songList.files[i].split("/").length - 1
-        let songArr = Math.random() > 0.5 ? songCategories.Forrest : songCategories.Adventure
-        songArr.push({
-          // title: arg.path + '/' + $scope.songList.files[i],
-          // file: arg.path + '/' + $scope.songList.files[i],
-          title: $scope.songList.files[i],
-          file: $scope.songList.files[i],
-          name: $scope.songList.files[i].split("/")[len],
-          howl: null,
-          index: i
-        });
+        let fileName = $scope.songList.files[i];
+        promises.push(parseCategories(fileName));
       }
 
+      Promise.all(promises).then(function (categoryInfos) {
+        let categoryInfoMap = {}
+        categoryInfos.forEach(function (info) {
+          categoryInfoMap[info.title] = info.categories
+        })
+        startPlayerWithCategories(categoryInfoMap)
+      })
+    }
+
+    function getCategoryToSongMap(categoryInfoMap) {
+      alert(JSON.stringify(categoryInfoMap))
+      let catToSongMap = {};
+      Object.entries(categoryInfoMap).forEach(function (entry) {
+        let title = entry[0];
+        let categories = entry[1];
+        (categories || []).forEach(function (cat) {
+          if (!catToSongMap[cat]) {
+            catToSongMap[cat] = [];
+          }
+          let len = title.split('/').length
+          catToSongMap[cat].push({
+            title: title,
+            file: title,
+            name: title.split("/")[len],
+            howl: null,
+            index: catToSongMap[cat].length
+          });
+        })
+      })
+      return catToSongMap;
+    }
+
+    function startPlayerWithCategories(categoryInfoMap) {
+      let categoryToSongMap = getCategoryToSongMap(categoryInfoMap);
+
       $scope.playersByCategory = {}
-      Object.entries(songCategories).forEach(entry => {
+
+      Object.entries(categoryToSongMap).forEach(entry => {
         let categoryName = entry[0];
         let songsInCategory = entry[1];
         if (!songsInCategory || !songsInCategory.length) {
@@ -180,16 +192,39 @@ angular.module('Player.player', ['ngRoute'])
           // Default to first player
           $scope.player = $scope.playersByCategory[categoryName]
         }
-      });
+      })
+
       $scope.songCategories = Object.keys($scope.playersByCategory)
 
       $scope.musicSelected = true;
       $scope.$apply()
     }
 
+    function parseCategories(file) {
+      return new Promise((resolve, reject) => {
+        new jsmediatags.Reader(file)
+          .setTagsToRead(["title", "comment"])
+          .read({
+            onSuccess: function (tag) {
+              if (tag && tag.tags && tag.tags.comment) {
+                resolve({
+                  'categories': tag.tags.comment.text.split(','),
+                  'title': file
+                });
+              }
+            },
+            onError: function (error) {
+              reject(error);
+            }
+          });
+      }).then(categoryInfo => {
+        return categoryInfo
+      })
+    }
+
     function tag(data) {
       new jsmediatags.Reader(data.file)
-        .setTagsToRead(["title", "artist", "picture"])
+        .setTagsToRead(["title", "artist", "picture", "comment"])
         .read({
           onSuccess: function (tag) {
             if (tag.tags.title) {
