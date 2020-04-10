@@ -153,6 +153,17 @@ angular.module('Player.player', ['ngRoute'])
       })
     }
 
+    function containsSong(songList, songTitle) {
+      var found = false;
+      for (var i = 0; i < songList.length; i++) {
+        if (songList[i].title == songTitle) {
+          found = true;
+          break;
+        }
+      }
+      return found;
+    }
+
     function getCategoryToSongMap(categoryInfoMap) {
       alert(JSON.stringify(categoryInfoMap))
       let catToSongMap = {};
@@ -163,11 +174,15 @@ angular.module('Player.player', ['ngRoute'])
           if (!catToSongMap[cat]) {
             catToSongMap[cat] = [];
           }
+          if (containsSong(catToSongMap[cat], title)) {
+            return;
+          }
+
           let len = title.split('/').length
           catToSongMap[cat].push({
             title: title,
             file: title,
-            name: title.split("/")[len],
+            name: title.split("/")[len - 1],
             howl: null,
             index: catToSongMap[cat].length
           });
