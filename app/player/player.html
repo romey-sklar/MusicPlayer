@@ -1,7 +1,7 @@
 <div>
-  <div class="row categoryTable col-md-12 text-center">
+  <div class="categoryTable col-md-12 text-center">
     <div ng-repeat="category in songCategories" ng-click="clickCategory(category)">
-      <div class="category">{{category}}</div>
+      <div class="category selected">{{category}}</div>
     </div>
   </div>
 
@@ -87,12 +87,14 @@
 
     </div>
 
-    <input class="form-control" id="search" type="search" ng-model="search.name" ng-show="playListVisible"
-      placeholder="Search" aria-label="Search">
-    <div id="playlist" ng-show="playListVisible" class="list-group style-3">
-      <!-- <input type="text" ng-model="search.name"> -->
-      <a href="" class="list-group-item list-group-item-action list" ng-repeat="song in player.playlist | filter:search"
-        ng-click="playPlaylistSong(song.index)">{{song.name}}</a>
+    <div class="sideContainer" ng-show="playListVisible">
+      <input class="form-control" id="search" type="search" ng-model="search.name" placeholder="Search"
+        aria-label="Search">
+      <div id="playlist" class="list-group style-3">
+        <!-- <input type="text" ng-model="search.name"> -->
+        <a href="" class="list-group-item list-group-item-action list"
+          ng-repeat="song in player.playlist | filter:search" ng-click="playPlaylistSong(song.index)">{{song.name}}</a>
+      </div>
     </div>
 
   </div>

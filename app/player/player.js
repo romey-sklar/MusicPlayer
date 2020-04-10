@@ -172,13 +172,16 @@ angular.module('Player.player', ['ngRoute'])
       Object.entries(songCategories).forEach(entry => {
         let categoryName = entry[0];
         let songsInCategory = entry[1];
-        $scope.playersByCategory[categoryName] = new Player(songsInCategory, categoryName)
+        if (!songsInCategory || !songsInCategory.length) {
+          return;
+        }
+        $scope.playersByCategory[categoryName] = new Player(songsInCategory, categoryName);
         if (!$scope.player) {
           // Default to first player
           $scope.player = $scope.playersByCategory[categoryName]
         }
       });
-      $scope.songCategories = Object.keys(songCategories)
+      $scope.songCategories = Object.keys($scope.playersByCategory)
 
       $scope.musicSelected = true;
       $scope.$apply()
@@ -271,7 +274,7 @@ angular.module('Player.player', ['ngRoute'])
         $scope.toggleMusicPlaying(false)
         $scope.player = $scope.playersByCategory[category]
         $scope.toggleMusicPlaying(true)
-      } else {
+      } else if ($scope.songPlaying) {
         $scope.playMusic()
       }
     }
