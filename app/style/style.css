@@ -13,10 +13,6 @@ body{
     overflow: hidden;
 }
 
-.row {
-  display: flex;
-}
-
 #track {
   margin-left: 2px;
   font-weight: bold;
@@ -46,7 +42,6 @@ body{
 
 .categoryTable {
   display: flex;
-  width: 100vw;
 }
 
 .category {
@@ -55,7 +50,6 @@ body{
   color: white;
   background-color: #212121;
   border: 1px solid white;
-  margin-right: 10px;
   margin-bottom: 10px;
   cursor: pointer;
 }

@@ -165,12 +165,12 @@ angular.module('Player.player', ['ngRoute'])
     }
 
     function getCategoryToSongMap(categoryInfoMap) {
-      alert(JSON.stringify(categoryInfoMap))
       let catToSongMap = {};
       Object.entries(categoryInfoMap).forEach(function (entry) {
         let title = entry[0];
         let categories = entry[1];
-        (categories || []).forEach(function (cat) {
+        (categories || []).forEach(function (categoryName) {
+          let cat = categoryName.replace(/\s/g, ''); // remove whitespace
           if (!catToSongMap[cat]) {
             catToSongMap[cat] = [];
           }
@@ -182,7 +182,7 @@ angular.module('Player.player', ['ngRoute'])
           catToSongMap[cat].push({
             title: title,
             file: title,
-            name: title.split("/")[len - 1],
+            name: title.split("/")[len - 1].replace(/\.mp3/g, ''),
             howl: null,
             index: catToSongMap[cat].length
           });
@@ -370,9 +370,13 @@ angular.module('Player.player', ['ngRoute'])
       $scope.mute = false;
     }
 
+    function randomIntFromInterval(min, max) { // min and max included 
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
     var Player = function (playlist, category) {
       this.playlist = playlist;
-      this.index = 0;
+      this.index = $scope.shuffle ? randomIntFromInterval(0, playlist.length - 1) : 0;
     }
 
     Player.prototype = {
