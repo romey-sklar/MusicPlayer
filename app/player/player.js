@@ -143,14 +143,20 @@ angular.module('Player.player', ['ngRoute'])
       }
       $scope.songList = arg;
       var songCategories = {
-        noLetters: [],
-        somewhere: []
+        Forrest: [],
+        Adventure: [],
+        Goblins: [],
+        Danger: [],
+        Royalty: [],
+        Skulls: [],
+        Bananas: [],
+        SavinoIsStupid: [],
+        CategoryName: []
       };
 
       for (let i = 0; i < $scope.songList.files.length; i++) {
         let len = $scope.songList.files[i].split("/").length - 1
-        let file = $scope.songList.files[i]
-        let songArr = file.indexOf("No") > -1 ? songCategories.noLetters : songCategories.somewhere
+        let songArr = Math.random() > 0.5 ? songCategories.Forrest : songCategories.Adventure
         songArr.push({
           // title: arg.path + '/' + $scope.songList.files[i],
           // file: arg.path + '/' + $scope.songList.files[i],
@@ -326,8 +332,6 @@ angular.module('Player.player', ['ngRoute'])
         var data = self.playlist[index];
         $scope.trackName = data.name;
         $scope.trackArtist = "";
-        // console.log(data);
-        tag(data);
 
         if (data.howl) {
           sound = data.howl;
@@ -387,8 +391,6 @@ angular.module('Player.player', ['ngRoute'])
         }
 
         var data = self.playlist[self.index];
-        // console.log(data);
-        tag(data);
 
         self.skipTo(index);
       },
@@ -403,7 +405,6 @@ angular.module('Player.player', ['ngRoute'])
 
         var data = self.playlist[index];
         // console.log(data);
-        tag(data);
 
         if (!$scope.songPlaying) {
           $scope.songPlaying = true;
