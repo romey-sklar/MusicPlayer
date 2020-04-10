@@ -213,6 +213,9 @@ angular.module('Player.player', ['ngRoute'])
 
       $scope.musicSelected = true;
       $scope.$apply()
+
+      $scope.playMusic()
+      $scope.playMusic()
     }
 
     function parseCategories(file) {
@@ -375,6 +378,7 @@ angular.module('Player.player', ['ngRoute'])
     }
 
     var Player = function (playlist, category) {
+      this.category = category;
       this.playlist = playlist;
       this.index = $scope.shuffle ? randomIntFromInterval(0, playlist.length - 1) : 0;
     }
