@@ -273,8 +273,11 @@ angular.module('Player.player', ['ngRoute'])
       if (category !== $scope.player.category) {
         $scope.toggleMusicPlaying(false)
         $scope.player = $scope.playersByCategory[category]
+        if ($scope.player.getCurrentTime() > 2) {
+          $scope.player.skip('next')
+        }
         $scope.toggleMusicPlaying(true)
-      } else if ($scope.songPlaying) {
+      } else {
         $scope.playMusic()
       }
     }
@@ -477,6 +480,11 @@ angular.module('Player.player', ['ngRoute'])
           sound.seek(sound.duration() * time);
           requestAnimationFrame(self.step.bind(self));
         }
+      },
+      getCurrentTime: function () {
+        var self = this;
+        var sound = self.playlist[self.index] && self.playlist[self.index].howl;
+        return sound ? sound.seek() : 0;
       }
     }
   }])
