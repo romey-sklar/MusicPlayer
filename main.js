@@ -73,7 +73,7 @@ function createWindow() {
               product_name: 'Music d20 Player',
               homepage: 'http://wsavino.com/',
               copyright: 'Developed by Romey Sklar',
-              icon_path: join(__dirname, 'build/icon.png')
+              icon_path: join(__dirname, 'd20.png')
             })
           }
         }
