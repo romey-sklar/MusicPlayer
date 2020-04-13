@@ -16,46 +16,12 @@ function createWindow() {
   win = new BrowserWindow({
     width: 1000,
     height: 620,
-    icon: __dirname + '/dusk.png',
+    icon: __dirname + '/d20.png',
     webPreferences: {
       nodeIntegration: true
     }
   })
 
-  var light = false
-  var dark = false
-  var disco = false
-
-  // fs.readFile('theme.txt', 'utf-8', function (err, buf) {
-  //   if (err)
-  //     return
-  //   var temp = buf.toString();
-  //   if (temp == "light")
-  //     light = true
-  //   // console.log(temp);
-  // });
-
-  storage.has('theme', function (error, hasKey) {
-    if (error) throw error
-    if (hasKey) {
-      storage.get('theme', function (error, data) {
-        if (error) throw error
-        console.log(data.theme)
-        if (data.theme == 'light') light = true
-        else if (data.theme == 'disco') disco = true
-        else dark = true
-      })
-    }
-  })
-
-  function handleClick(menuItem, browserWindow, event) {
-    console.log(menuItem.label.toLowerCase())
-    storage.set('theme', { theme: menuItem.label.toLowerCase() }, function (
-      error
-    ) {
-      if (error) throw error
-    })
-  }
 
   /**
    * Because menu buttons on MacOS *require* at least one submenu,
@@ -74,21 +40,12 @@ function createWindow() {
     label: 'Info',
     click: function () {
       openAboutWindow({
-        product_name: 'Dusk Player',
-        homepage: 'https://home.aveek.io',
-        copyright: 'By Aveek Saha',
+        product_name: 'Music d20 Player',
+        homepage: 'http://wsavino.com/',
+        copyright: 'Developed by Romey Sklar',
         icon_path: join(__dirname, 'build/icon.png')
       })
     }
-  }
-
-  var theme = {
-    label: 'Theme',
-    submenu: [
-      { label: 'Light', type: 'radio', click: handleClick, checked: light },
-      { label: 'Dark', type: 'radio', click: handleClick, checked: dark },
-      { label: 'Disco', type: 'radio', click: handleClick, checked: disco }
-    ]
   }
 
   if (process.platform === 'darwin') {
@@ -113,9 +70,9 @@ function createWindow() {
 
           click: function () {
             openAboutWindow({
-              product_name: 'Dusk Player',
-              homepage: 'https://home.aveek.io',
-              copyright: 'By Aveek Saha',
+              product_name: 'Music d20 Player',
+              homepage: 'http://wsavino.com/',
+              copyright: 'Developed by Romey Sklar',
               icon_path: join(__dirname, 'build/icon.png')
             })
           }
@@ -123,9 +80,9 @@ function createWindow() {
       ]
     }
 
-    createMenuMac(openFolder, theme, info)
+    createMenuMac(openFolder, info)
   } else {
-    createMenuOther(openFolder, theme, info)
+    createMenuOther(openFolder, info)
   }
 
   // and load the index.html of the app.
@@ -242,12 +199,12 @@ function scanDir(filePath) {
   win.webContents.send('selected-files', objToSend)
 }
 
-function createMenuOther(openFolder, theme, info) {
-  var menu = Menu.buildFromTemplate([openFolder, theme, info])
+function createMenuOther(openFolder, info) {
+  var menu = Menu.buildFromTemplate([openFolder, info])
   Menu.setApplicationMenu(menu)
 }
 
-function createMenuMac(openFolder, theme, info) {
+function createMenuMac(openFolder, info) {
   var menu = Menu.buildFromTemplate([
     {
       label: require('electron').app.getName(),
@@ -259,7 +216,6 @@ function createMenuMac(openFolder, theme, info) {
       ]
     },
     openFolder,
-    theme,
     info
   ])
   Menu.setApplicationMenu(menu)

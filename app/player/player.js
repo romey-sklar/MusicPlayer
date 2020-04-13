@@ -30,15 +30,6 @@ angular.module('Player.player', ['ngRoute'])
 
     const dataPath = storage.getDataPath();
 
-    // fs.readFile('theme.txt', 'utf-8', function (err, buf) {
-    //   if (err)
-    //     return
-    //   var temp = buf.toString();
-    //   if(temp == "light")
-    //     $location.path('/player/light')
-    //   console.log(temp);
-    // });
-
     storage.has('path', function (error, hasKey) {
       if (error) throw error;
       if (hasKey) {
@@ -46,32 +37,6 @@ angular.module('Player.player', ['ngRoute'])
           if (error) throw error;
           console.log(data);
           scanDir([data.path.toString()]);
-        });
-      }
-    })
-
-    storage.has('theme', function (error, hasKey) {
-      if (error) throw error;
-      if (hasKey) {
-        storage.get('theme', function (error, data) {
-          if (error) throw error;
-          console.log(data);
-          if (data.theme == "light") {
-            // $location.path('/player/light')
-            $scope.theme = 'light'
-            document.body.style.backgroundColor = "#F5F5F5"
-            document.body.style.color = "#212529"
-            var icons = document.body.querySelectorAll("svg");
-            console.log(icons);
-
-            icons.forEach(icon => {
-              icon.style.color = "#212529";
-            });
-
-          }
-          else if (data.theme == "disco") {
-            $scope.theme = 'disco'
-          }
         });
       }
     })
@@ -117,14 +82,6 @@ angular.module('Player.player', ['ngRoute'])
 
       startPlayer(arg)
     }
-    function themeChange() {
-      $location.path('/player/light')
-    }
-    ipc.on('theme-change', function (event, arg) {
-      // $location.path('/player/light')
-
-      themeChange()
-    });
 
     ipc.on('selected-files', function (event, arg) {
 
